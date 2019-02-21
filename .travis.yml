@@ -1,10 +1,18 @@
 language: go
 go:
-  - "1.11.x"
-
+- 1.11.x
 install:
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-
+- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 script:
-  - make check-style
-  - make test
+- make check-style
+- make test
+deploy:
+  provider: releases
+  api_key:
+    secure: SjYTzFdU7RBfHjh1pOg+RvaN9W4qmwm7tAlK3y23o3jJiCgCnsfn12Dkfj0lPiT2+EdUp6c2HHkCBOWWbhnEnBJybvi9vbzXwE2f/I4pnCfNL03oMEWSAw3vKL8B9KeEkeSR68Y5J6zzfeVvnR8PTig869cOYwmlGCWPDJjPhB23bka/g3FVlSCpvmSGqJKEHit4Qqgs0UVXbYqOPyhuaob1zDq3sA1PyL6r4JmZs4FKNo/U4SS7O+rBfBMT2VSfm+TVb9HnZawAq+dok0WibeMlUwTIRtjLqEEdQ5XmI4nJqEQ4oXFFw95UDHVn3cwHF2mqFVWHBOiXXD+B5BIpVO/4q+0lxdgu6Zer/bYMB2IwHvWr6uoG9WZTp0PloH2bYnTFVtT9oeXDmkrSvz2h5oEvqO/ITxfImHuJ/Dxwnm1yDhqceY/h8iHVmN8VbPxqzCmBSWKaKrW8/HrsHR9GVxZWV5JOexWBnnGoRLWoinZKqtWnN+4mhbRK1goKGVG8BtslagPpp/wbafrjqgYcaQam5VgQ957KntYLcULUZGjGqDaJgcdkl67wC77ldBr8AzYiOVOlATdKbyaHR+UpIMHXQuNTGf+vuheRT31jGBUC1+24VEPtX93/A0o5RXE0XeY+tNpCy+qQogNP/SSqyfghogwzwwFOKHdxL7nOoEw=
+  skip_cleanup: true
+  file_glob: true
+  file: dist/statuspage-*.tar.gz
+  on:
+    repo: cpanato/mattermost-plugin-statuspage
+    tags: true
