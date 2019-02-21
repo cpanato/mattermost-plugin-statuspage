@@ -52,9 +52,9 @@ func (p *Plugin) OnActivate() error {
 			CreatorId:   user.Id,
 		}
 
-		newChannel, err := p.API.CreateChannel(channelToCreate)
+		newChannel, errChannel := p.API.CreateChannel(channelToCreate)
 		if err != nil {
-			return err
+			return errChannel
 		}
 		p.ChannelID = newChannel.Id
 	} else if err != nil {
