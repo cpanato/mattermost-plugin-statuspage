@@ -1,0 +1,35 @@
+{
+    "id": "statuspage",
+    "name": "StatusPage Notification",
+    "description": "This plugin receive the webhooks from StatusPage and post as a message in a channel.",
+    "version": "0.0.1",
+    "server": {
+        "executables": {
+            "linux-amd64": "server/dist/plugin-linux-amd64",
+            "darwin-amd64": "server/dist/plugin-darwin-amd64",
+            "windows-amd64": "server/dist/plugin-windows-amd64.exe"
+        }
+    },
+    "settings_schema": {
+        "header": "",
+        "footer": "Use this webhook URL to set up the StatusPage integration.\n\n`https://SITEURL/plugins/statuspage/webhook?service=<NAME_OF_THE_SERVICE>`",
+        "settings": [{
+            "key": "Team",
+            "display_name": "Team",
+            "type": "text",
+            "help_text": "Select the team that this integration is attached to."
+        },
+        {
+            "key": "Channel",
+            "display_name": "Channel",
+            "type": "text",
+            "help_text": "Name of the Channel you want to create/use to post the messages."
+        },
+        {
+            "key": "Username",
+            "display_name": "User",
+            "type": "username",
+            "help_text": "Select the username that this integration is attached to."
+        }]
+    }
+}
