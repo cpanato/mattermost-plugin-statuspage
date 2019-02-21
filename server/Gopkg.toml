@@ -7,6 +7,3 @@
   name = "github.com/mattermost/mattermost-server"
   version = "~5.6.0"
 
-[[constraint]]
-  name = "github.com/stretchr/testify"
-  version = "~1.2.0"
