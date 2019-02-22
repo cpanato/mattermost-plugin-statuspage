@@ -2,7 +2,7 @@
     "id": "statuspage",
     "name": "StatusPage Notification",
     "description": "This plugin receive the webhooks from StatusPage and post as a message in a channel.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",
