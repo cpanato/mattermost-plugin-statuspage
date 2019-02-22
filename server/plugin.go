@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/mattermost/mattermost-server/model"
@@ -70,6 +71,14 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 
 	switch r.URL.Path {
 	case "/webhook":
+		token := r.URL.Query().Get("token")
+		if token == "" || strings.Compare(token, p.configuration.Token) != 0 {
+			errorMessage := "Invalid or missing token"
+			p.postHTTPDebugMessage(errorMessage)
+			http.Error(w, errorMessage, http.StatusBadRequest)
+			return
+		}
+
 		service := r.URL.Query().Get("service")
 		if service == "" {
 			errorMessage := "You must provide a service name"
@@ -96,6 +105,10 @@ func (p *Plugin) IsValid(configuration *configuration) error {
 
 	if configuration.Username == "" {
 		return fmt.Errorf("Must set a User.")
+	}
+
+	if configuration.Token == "" {
+		return fmt.Errorf("Must set a Token.")
 	}
 
 	return nil

@@ -21,6 +21,7 @@ type configuration struct {
 	Team     string
 	Channel  string
 	Username string
+	Token    string
 }
 
 // Clone shallow copies the configuration. Your implementation may require a deep copy if

@@ -12,7 +12,7 @@
     },
     "settings_schema": {
         "header": "",
-        "footer": "Use this webhook URL to set up the StatusPage integration.\n\n`https://SITEURL/plugins/statuspage/webhook?service=<NAME_OF_THE_SERVICE>`",
+        "footer": "Use this webhook URL to set up the StatusPage integration.\n\n`https://SITEURL/plugins/statuspage/webhook?service=<NAME_OF_THE_SERVICE>&token=<TOKEN>`",
         "settings": [{
             "key": "Team",
             "display_name": "Team",
@@ -30,6 +30,12 @@
             "display_name": "User",
             "type": "username",
             "help_text": "Select the username that this integration is attached to."
+        },
+        {
+            "key": "Token",
+            "display_name": "Token",
+            "type": "generated",
+            "help_text": "The token to use when setting the webhook. The request need send the token to validate the request."
         }]
     }
 }
