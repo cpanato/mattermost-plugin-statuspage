@@ -58,6 +58,7 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 	attachment := &model.SlackAttachment{
 		Title:  serviceStatusName,
 		Fields: fields,
+		Color:  setColor(t.Incident.Impact),
 	}
 
 	post := &model.Post{
@@ -83,4 +84,20 @@ func addFields(fields []*model.SlackAttachmentField, title, msg string, short bo
 		Value: msg,
 		Short: short,
 	})
+}
+
+func setColor(impact string) string {
+	mapImpactColor := map[string]string{
+		"maintenance":          "#FAF605",
+		"operational":          "#00FF00",
+		"degraded_performance": "#F8740D",
+		"major_outage":         "#C72015",
+		"partial_outage":       "#F8740D",
+	}
+
+	if val, ok := mapImpactColor[impact]; ok {
+		return val
+	}
+
+	return "#0000FF"
 }
