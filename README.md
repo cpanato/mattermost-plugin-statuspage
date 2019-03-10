@@ -2,9 +2,11 @@
 
 This plugin sends webhook notifications from Statuspage to Mattermost. Use it to get notified of system outages and of partially degraded services.
 
+**Supported Mattermost Server Versions: 5.4+**
+
 To see the plugin in action, join the **Statuspage** channel in our communtiy server at https://community.mattermost.com/core/channels/statuspage.
 
-**Supported Mattermost Server Versions: 5.4+**
+# ![Statuspage notifications](assets/Statuspage.png)
 
 ## Installation
 
