@@ -15,14 +15,15 @@ const (
 )
 
 func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string) {
-
+	p.API.LogInfo("Received statuspage notification", "service=", service)
 	var t *StatusPageNotification
 	if err := json.NewDecoder(body).Decode(&t); err != nil {
 		p.postHTTPDebugMessage(err.Error())
 		return
 	}
-	p.API.LogDebug(t.ToJson())
+	p.API.LogInfo("Message to improve statuspage", "msg=", t.ToJson())
 
+	var color string
 	var fields []*model.SlackAttachmentField
 	if t.Component != nil {
 		p.API.LogDebug(t.Component.Status)
@@ -35,6 +36,7 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 			msg := fmt.Sprintf("Old Status: %s\nNew Status: %s", t.ComponentUpdate.OldStatus, t.ComponentUpdate.NewStatus)
 			fields = addFields(fields, "", msg, true)
 		}
+		color = setColor(t.Page.StatusIndicator)
 	}
 
 	if t.Incident != nil {
@@ -51,14 +53,14 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 			msg := fmt.Sprintf("Status: %s\nDescription: %s\nUpdatedAt: %s", incidentUpdate.Status, incidentUpdate.Body, incidentUpdate.UpdatedAt.String())
 			fields = addFields(fields, "Incident Update", msg, false)
 		}
-
+		color = setColor(t.Incident.Impact)
 	}
 
 	serviceStatusName := fmt.Sprintf("%s Status - %s", strings.ToUpper(service), t.Page.StatusDescription)
 	attachment := &model.SlackAttachment{
 		Title:  serviceStatusName,
 		Fields: fields,
-		Color:  setColor(t.Incident.Impact),
+		Color:  color,
 	}
 
 	post := &model.Post{
@@ -92,6 +94,7 @@ func setColor(impact string) string {
 		"operational":          "#00FF00",
 		"degraded_performance": "#F8740D",
 		"major_outage":         "#C72015",
+		"major":                "#800080",
 		"partial_outage":       "#F8740D",
 	}
 
