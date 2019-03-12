@@ -2,7 +2,7 @@
     "id": "statuspage",
     "name": "Statuspage",
     "description": "This plugin send Statuspage notifications to a Mattermost channel.",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",

@@ -36,7 +36,7 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 			msg := fmt.Sprintf("Old Status: %s\nNew Status: %s", t.ComponentUpdate.OldStatus, t.ComponentUpdate.NewStatus)
 			fields = addFields(fields, "", msg, true)
 		}
-		color = setColor(t.Page.StatusIndicator)
+		color = setColor(t.Component.Status)
 	}
 
 	if t.Incident != nil {
