@@ -90,17 +90,18 @@ func addFields(fields []*model.SlackAttachmentField, title, msg string, short bo
 
 func setColor(impact string) string {
 	mapImpactColor := map[string]string{
-		"maintenance":          "#FAF605",
-		"operational":          "#00FF00",
-		"degraded_performance": "#F8740D",
-		"major_outage":         "#C72015",
-		"major":                "#800080",
-		"partial_outage":       "#F8740D",
+		"maintenance":          "#ADD8E6",
+		"operational":          "#008000",
+		"degraded_performance": "#FFFF66",
+		"partial_outage":       "#FFA500",
+		"major_outage":         "#FF0000",
+		"major":                "#FF4500",
+		"minor":                "#FF6347",
 	}
 
 	if val, ok := mapImpactColor[impact]; ok {
 		return val
 	}
 
-	return "#0000FF"
+	return "#F0F8FF"
 }
