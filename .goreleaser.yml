@@ -1,0 +1,25 @@
+project_name: mattermost-plugin-statuspage
+
+dist: goreleaser
+
+builds:
+  - skip: true
+
+before:
+  hooks:
+  - make dist
+
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"
+  extra_files:
+    - glob: ./dist/statuspage*.tar.gz
+
+release:
+  prerelease: allow # remove this when we start publishing non-prerelease or set to auto
+  draft: true # allow for manual edits
+  github:
+    owner: cpanato
+    name: mattermost-plugin-statuspage
+
+  extra_files:
+    - glob: ./dist/statuspage*.tar.gz
