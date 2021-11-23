@@ -4,6 +4,9 @@ ifeq ($(GO),)
     $(error "go is not available: see https://golang.org/doc/install")
 endif
 
+# Ensure that the build tools are compiled. Go's caching makes this quick.
+$(shell cd build/manifest && $(GO) build -o ../bin/manifest)
+
 # Ensure that the deployment tools are compiled. Go's caching makes this quick.
 $(shell cd build/pluginctl && $(GO) build -o ../bin/pluginctl)
 
