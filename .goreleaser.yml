@@ -22,4 +22,4 @@ release:
     name: mattermost-plugin-statuspage
 
   extra_files:
-    - glob: ./dist/statuspage*.tar.gz
+    - glob: ./dist/statuspage-*.tar.gz
