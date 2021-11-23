@@ -14,7 +14,7 @@
     },
     "settings_schema": {
         "header": "",
-        "footer": "Use this webhook URL to set up the Statuspage integration.\n\n`https://SITEURL/plugins/statuspage/webhook?service=NAMEOFSERVICE>&token=TOKEN`",
+        "footer": "Use this webhook URL to set up the Statuspage integration.\n\n`https://SITEURL/plugins/statuspage/webhook?service=<NAMEOFSERVICE>&token=TOKEN`",
         "settings": [
         {
             "key": "Team",
