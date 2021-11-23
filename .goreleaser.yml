@@ -10,16 +10,15 @@ before:
   - make dist
 
 checksum:
-  name_template: "{{ .ProjectName }}_checksums.txt"
   extra_files:
-    - glob: ./dist/statuspage*.tar.gz
+    - glob: ./dist/statuspage-{{ .Version }}.tar.gz
 
 release:
-  prerelease: allow # remove this when we start publishing non-prerelease or set to auto
+  prerelease: allow
   draft: true # allow for manual edits
   github:
     owner: cpanato
     name: mattermost-plugin-statuspage
 
   extra_files:
-    - glob: ./dist/statuspage-*.tar.gz
+    - glob: ./dist/statuspage-{{ .Version }}.tar.gz
