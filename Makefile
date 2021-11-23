@@ -240,6 +240,7 @@ kill: detach
 .PHONY: clean
 clean:
 	rm -fr dist/
+	rm -fr goreleaser
 ifneq ($(HAS_SERVER),)
 	rm -fr server/coverage.txt
 	rm -fr server/dist
