@@ -16,15 +16,15 @@ import (
 type Plugin struct {
 	plugin.MattermostPlugin
 
-	// configurationLock synchronizes access to the configuration.
-	configurationLock sync.RWMutex
-
 	// configuration is the active plugin configuration. Consult getConfiguration and
 	// setConfiguration for usage.
 	configuration *configuration
 
 	BotUserID string
 	ChannelID string
+
+	// configurationLock synchronizes access to the configuration.
+	configurationLock sync.RWMutex
 }
 
 func (p *Plugin) OnActivate() error {
@@ -64,13 +64,15 @@ func (p *Plugin) OnActivate() error {
 		if errChannel != nil {
 			return errors.Wrap(errChannel, "creating the channel")
 		}
+
 		p.ChannelID = newChannel.Id
 
+		return nil
 	} else if appErr != nil {
 		return errors.Wrap(appErr, "getting the channel to check if that already exists")
-	} else {
-		p.ChannelID = channel.Id
 	}
+
+	p.ChannelID = channel.Id
 
 	return nil
 }
@@ -111,15 +113,15 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 
 func (p *Plugin) IsValid(configuration *configuration) error {
 	if configuration.Team == "" {
-		return fmt.Errorf("Must set a Team.")
+		return fmt.Errorf("must set a Team")
 	}
 
 	if configuration.Channel == "" {
-		return fmt.Errorf("Must set a Channel.")
+		return fmt.Errorf("must set a Channel")
 	}
 
 	if configuration.Token == "" {
-		return fmt.Errorf("Must set a Token.")
+		return fmt.Errorf("must set a Token")
 	}
 
 	return nil

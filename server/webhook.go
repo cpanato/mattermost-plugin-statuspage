@@ -29,7 +29,7 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 		p.postHTTPDebugMessage(err.Error())
 		return
 	}
-	p.API.LogInfo("Message to improve statuspage", "msg", t.ToJson())
+	p.API.LogInfo("Message to improve statuspage", "msg", t.ToJSON())
 
 	if *t == (StatusPageNotification{}) {
 		p.API.LogInfo("payload is empty", "service", service)

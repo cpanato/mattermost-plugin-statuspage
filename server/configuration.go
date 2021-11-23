@@ -83,7 +83,7 @@ func (p *Plugin) OnConfigurationChange() error {
 
 	p.setConfiguration(configuration)
 
-	p.OnActivate()
+	_ = p.OnActivate()
 
 	return nil
 }
