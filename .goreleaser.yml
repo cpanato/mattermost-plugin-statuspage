@@ -11,7 +11,7 @@ before:
 
 checksum:
   extra_files:
-    - glob: ./diststatus/statuspage-*.tar.gz
+    - glob: ./dist/statuspage-*.tar.gz
 
 release:
   prerelease: allow
@@ -21,4 +21,4 @@ release:
     name: mattermost-plugin-statuspage
 
   extra_files:
-    - glob: ./diststatus/statuspage-*.tar.gz
+    - glob: ./dist/statuspage-*.tar.gz
