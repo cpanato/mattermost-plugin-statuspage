@@ -6,8 +6,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mattermost/mattermost-server/model"
-	"github.com/mattermost/mattermost-server/plugin"
+	"github.com/pkg/errors"
+
+	pluginapi "github.com/mattermost/mattermost-plugin-api"
+	"github.com/mattermost/mattermost-server/v6/model"
+	"github.com/mattermost/mattermost-server/v6/plugin"
 )
 
 type Plugin struct {
@@ -28,38 +31,43 @@ func (p *Plugin) OnActivate() error {
 	configuration := p.getConfiguration()
 
 	if err := p.IsValid(configuration); err != nil {
-		return err
+		return errors.Wrap(err, "validating the configuration")
 	}
 
-	team, err := p.API.GetTeamByName(p.configuration.Team)
+	client := pluginapi.NewClient(p.API, p.Driver)
+	botID, err := client.Bot.EnsureBot(&model.Bot{
+		Username:    "statuspage_bot",
+		DisplayName: "StatusPage",
+		Description: "Created by the StatusPage plugin.",
+	})
 	if err != nil {
-		return err
+		return errors.Wrap(err, "ensuring StatusPage bot")
+	}
+	p.BotUserID = botID
+
+	team, TeamErr := p.API.GetTeamByName(p.configuration.Team)
+	if TeamErr != nil {
+		return errors.Wrap(err, "getting team name")
 	}
 
-	user, err := p.API.GetUserByUsername(p.configuration.Username)
-	if err != nil {
-		p.API.LogError(err.Error())
-		return fmt.Errorf("Unable to find user with configured username: %v", p.configuration.Username)
-	}
-	p.BotUserID = user.Id
-
-	channel, err := p.API.GetChannelByName(team.Id, p.configuration.Channel, false)
-	if err != nil && err.StatusCode == http.StatusNotFound {
+	channel, appErr := p.API.GetChannelByName(team.Id, p.configuration.Channel, false)
+	if appErr != nil && appErr.StatusCode == http.StatusNotFound {
 		channelToCreate := &model.Channel{
 			Name:        p.configuration.Channel,
 			DisplayName: p.configuration.Channel,
-			Type:        model.CHANNEL_OPEN,
+			Type:        model.ChannelTypeOpen,
 			TeamId:      team.Id,
-			CreatorId:   user.Id,
+			CreatorId:   botID,
 		}
 
 		newChannel, errChannel := p.API.CreateChannel(channelToCreate)
-		if err != nil {
-			return errChannel
+		if errChannel != nil {
+			return errors.Wrap(errChannel, "creating the channel")
 		}
 		p.ChannelID = newChannel.Id
-	} else if err != nil {
-		return err
+
+	} else if appErr != nil {
+		return errors.Wrap(appErr, "getting the channel to check if that already exists")
 	} else {
 		p.ChannelID = channel.Id
 	}
@@ -68,7 +76,11 @@ func (p *Plugin) OnActivate() error {
 }
 
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
-
+	if r.Method == http.MethodGet {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Mattermost StatusPage Plugin"))
+		return
+	}
 	switch r.URL.Path {
 	case "/webhook":
 		token := r.URL.Query().Get("token")
@@ -88,6 +100,9 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 		}
 
 		p.handleWebhook(r.Body, service, p.ChannelID, p.BotUserID)
+
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	default:
 		p.postHTTPDebugMessage("Invalid URL path")
 		http.NotFound(w, r)
@@ -101,10 +116,6 @@ func (p *Plugin) IsValid(configuration *configuration) error {
 
 	if configuration.Channel == "" {
 		return fmt.Errorf("Must set a Channel.")
-	}
-
-	if configuration.Username == "" {
-		return fmt.Errorf("Must set a User.")
 	}
 
 	if configuration.Token == "" {

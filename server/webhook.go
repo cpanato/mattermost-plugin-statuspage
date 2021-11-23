@@ -6,22 +6,35 @@ import (
 	"io"
 	"strings"
 
-	"github.com/mattermost/mattermost-server/model"
+	"github.com/mattermost/mattermost-server/v6/model"
 )
 
 const (
-	statusPageIconURL  = "https://pbs.twimg.com/profile_images/963832478728314880/QoqF8Db1_400x400.jpg"
-	statusPageUsername = "Status Page Notification"
+	statusPageIconURL = "https://pbs.twimg.com/profile_images/963832478728314880/QoqF8Db1_400x400.jpg"
 )
 
 func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string) {
-	p.API.LogInfo("Received statuspage notification", "service=", service)
+	if service == "" || channelID == "" || userID == "" {
+		p.API.LogInfo("missing service or channelID or UserID", "service", service, "userID", service, "channelID", service)
+		return
+	}
+
+	p.API.LogInfo("Received statuspage notification", "service", service)
+
 	var t *StatusPageNotification
-	if err := json.NewDecoder(body).Decode(&t); err != nil {
+	if err := json.NewDecoder(body).Decode(&t); err == io.EOF {
+		p.API.LogInfo("payload is empty", "err", err.Error())
+		return
+	} else if err != nil {
 		p.postHTTPDebugMessage(err.Error())
 		return
 	}
-	p.API.LogInfo("Message to improve statuspage", "msg=", t.ToJson())
+	p.API.LogInfo("Message to improve statuspage", "msg", t.ToJson())
+
+	if *t == (StatusPageNotification{}) {
+		p.API.LogInfo("payload is empty", "service", service)
+		return
+	}
 
 	var color string
 	var fields []*model.SlackAttachmentField
@@ -56,7 +69,11 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 		color = setColor(t.Incident.Impact)
 	}
 
-	serviceStatusName := fmt.Sprintf("%s Status - %s", strings.ToUpper(service), t.Page.StatusDescription)
+	serviceStatusName := fmt.Sprintf("%s Status", strings.ToUpper(service))
+	if t.Page != nil {
+		serviceStatusName = fmt.Sprintf("%s Status - %s", strings.ToUpper(service), t.Page.StatusDescription)
+	}
+
 	attachment := &model.SlackAttachment{
 		Title:  serviceStatusName,
 		Fields: fields,
@@ -68,7 +85,6 @@ func (p *Plugin) handleWebhook(body io.Reader, service, channelID, userID string
 		UserId:    userID,
 		Props: map[string]interface{}{
 			"from_webhook":      "true",
-			"override_username": statusPageUsername,
 			"override_icon_url": statusPageIconURL,
 		},
 	}
@@ -84,7 +100,7 @@ func addFields(fields []*model.SlackAttachmentField, title, msg string, short bo
 	return append(fields, &model.SlackAttachmentField{
 		Title: title,
 		Value: msg,
-		Short: short,
+		Short: model.SlackCompatibleBool(short),
 	})
 }
 

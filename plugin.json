@@ -2,18 +2,21 @@
     "id": "statuspage",
     "name": "Statuspage",
     "description": "This plugin send Statuspage notifications to a Mattermost channel.",
-    "version": "0.0.7",
+    "version": "0.1.0",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",
+            "linux-arm64": "server/dist/plugin-linux-arm64",
             "darwin-amd64": "server/dist/plugin-darwin-amd64",
+            "darwin-arm64": "server/dist/plugin-darwin-arm64",
             "windows-amd64": "server/dist/plugin-windows-amd64.exe"
         }
     },
     "settings_schema": {
         "header": "",
         "footer": "Use this webhook URL to set up the Statuspage integration.\n\n`https://SITEURL/plugins/statuspage/webhook?service=NAMEOFSERVICE>&token=TOKEN`",
-        "settings": [{
+        "settings": [
+        {
             "key": "Team",
             "display_name": "Team:",
             "type": "text",
@@ -24,12 +27,6 @@
             "display_name": "Channel:",
             "type": "text",
             "help_text": "Channel you want to send messages to. Use channel URL such as 'town-square', instead of a display name. If you specify a channel that does not exist, this plugin creates a new channel with that name."
-        },
-        {
-            "key": "Username",
-            "display_name": "User:",
-            "type": "username",
-            "help_text": "Select the username that this integration is attached to."
         },
         {
             "key": "Token",
